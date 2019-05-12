@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>AngularJS 指令</title>
+	<!-- <link rel="stylesheet" ng-href="{{link}}"> -->
+	<style>
+		.red {
+			color: red;
+		}
+
+		.blue {
+			color: blue;
+		}
+        ul li{
+            list-style: none;
+        }
+    </style>
+    
+</head>
+<body ng-app="App">
+	<h1>学习angular js (MVC实现的开发模式)
+		<br>
+        1、内置指令的练习
+        2、自定义指令
+    </h1>
+    
+	
+	<ul ng-controller="DemoController">
+		<li ng-bind="name"></li>
+		<li>{{name}}</li>
+		<li ng-show="1">ng-show用来显示或隐藏内容的，当值为true时显示</li>
+		<li ng-hide="0">ng-hide用来显示或隐藏内容的，当值为true时隐藏</li>
+		<li ng-if="1">ng-if用来控制元素是否存在，当值为true时存在</li>
+		<li><img ng-src="{{tath}}" alt="" height=300 width=500></li>
+		<li ng-class="{red: true, blue: true}">ng-class指令</li>
+		<li><input type="text" ng-disabled="1">ng-disabled表单禁用</li>
+		<li><input type="text" ng-readonly="1" value="angular"> ng-readonly 表单只读</li>
+        <li><input type="checkbox" ng-checked="1">男 <span>ng-checked 单/多选框选中</span>    </li>
+        <li><input type="checkbox" ng-checked="0">女     </li>
+        <li><input type="radio" ng-checked="1">男     </li>
+		<li>
+               
+			<select name="" id="">
+				<option value="">河北省</option>
+				<option value="">山东省</option>
+                <option value="" ng-selected="1">北京市</option>
+               
+            </select>
+            <span>ng-selected 下拉菜单选中</span>
+		</li>
+	</ul>
+	
+	<script src="angular.min.js"></script>
+	<script>
+		
+// 创建模块,创建出模块App,这个模块又是一个对象，对象下有N多方法
+		var App=angular.module("App",[]);
+//创建控制器，控制器创建好，相当于MVC都对应有了
+		App.controller('DemoController', ['$scope', function ($scope) {
+ //$scope是一个空对象，其实就是model  用来处理数据
+   		    $scope.name = '小明';
+
+			$scope.tath = './images/01.jpg';
+
+			$scope.link = './main.css';
+
+		}]);
+
+// 通过模块实例对象的directive方法可以自定义指令
+            App.directive('tag', function () {
+
+            // 返回一个对象，这个对象就是自定义指令相关的内容
+            return {
+                // E element
+                // A attribute
+                // C class
+                // M mark replace 必须为true
+                //想用什么形式实现，写哪几个
+                restrict: 'ECMA',
+                // template: '<ul><li>首页</li><li>列表</li></ul>',
+                templateUrl: './list.html',
+                // replace: true
+            }
+
+            });
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="App">
+
+<head>
+    <meta charset="UTF-8">
+    <title>服务学习</title>
+</head>
+
+<body ng-app="App">
+
+    <h1>服务学习</h1>
+    <h3>
+        一、内建服务
+        <br> 1、$location 提供获取地址相关信息的服务
+        <br> 2、$timeout
+        <br> $interval
+        <br> 3、$filter 在控制器中格式化数据
+        <br> 4、$log 调试信息
+        <br> 5、$http
+        <br> 传递的数据可以是'key=val&key=val'形式，这种形式叫formData
+        <br> Content-Type 设成 application/x-www-form-urlencoded
+        <br> 当请求数据类型不一样，后端在接收的时采取方法也不一样
+        <br> 假如上述方式以PHP为例可以使用$_POST接收
+        <br> application/json;charset=UTF-8 就是json对象形式传
+        <br> Request Payload
+        <br> 假如采用上述方式，以PHP为例$_POST就不能接收了
+        <br>
+
+        <br> 二、自定义服务 <br>
+        1、factory方法 <br>
+        2、service方法 <br>
+        3、value方法 <br>
+        以下为执行内容 
+
+
+        <dl ng-controller="DemoController">
+            <dt>{{title}}</dt>
+            <dd>absUrl: {{absUrl}}</dd>
+            <dd>url: {{url}}</dd>
+            <dd>host: {{host}}</dd>
+            <dd>search: {{search}}</dd>
+            <dd>hash: {{hash}}</dd>
+            <dd>protocol: {{protocol}}</dd>
+            <dd>port: {{port}}</dd>
+        </dl>
+        <!--  -->
+        <div ng-controller="EemoController">
+            <ul>
+                <li>{{msg}}</li>
+                <li>{{now|date: 'yyyy-MM-dd hh:mm:ss'}}</li>
+                <li>
+                    <button ng-click="stop()">停</button>
+                </li>
+            </ul>
+        </div>
+
+        <ul ng-controller="FemoController">
+
+        </ul>
+
+        <div ng-controller="GemoController">
+
+        </div>
+
+        <div ng-controller="TemoController">
+
+                <span>{{now}}</span>
+            
+            </div>
+
+            <div ng-controller="YemoController">
+                    {{author}}
+                    {{ver}}
+                </div>
+
+        <script src="angular.min.js"></script>
+        <script>
+            var App = angular.module('App', []);
+
+            // $location内置服务 AngularJS 专门提供了一个帮你获URL地址一个服务
+
+            App.controller('DemoController', ['$scope', '$location', function ($scope, $location) {
+
+                $scope.title = '学习$location服务';
+
+                // $location就是angularJS提前封装好的// 提供获取地址相关信息的服务
+                // 地址是有若干部分组合成的
+
+                // http:// 协议
+                // www.baidu.com / 124.12.134.12 主机
+                // :8080 端口号
+                // #abc  锚点
+                // ?name=itcast&age=10 查询参数据(querystring)
+
+
+                $scope.absUrl = $location.absUrl();
+
+                $scope.url = $location.url();
+
+                $scope.host = $location.host();
+
+                $scope.search = $location.search();
+
+                $scope.hash = $location.hash();
+
+                $scope.protocol = $location.protocol();
+
+                $scope.port = $location.port();
+
+            }]);
+
+
+            App.controller('EemoController', ['$scope', '$timeout', '$interval', function ($scope, $timeout, $interval) {
+
+                $timeout(function () {
+
+                    $scope.msg = '执行了';
+
+                }, 3000);
+
+
+                var timer = $interval(function () {
+
+                    $scope.now = new Date;
+
+                }, 1000);
+
+                $scope.stop = function () {
+                    $interval.cancel(timer);
+                }
+
+            }]);
+
+
+            App.controller('FemoController', ['$log', function ($log) {
+
+                $log.info('普通信息');
+
+                $log.warn('警告信息');
+
+                $log.error('错误信息');
+
+                $log.log('打印信息');
+
+                $log.debug('调试信息');
+
+            }]);
+
+
+            App.controller('GemoController', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+
+                // $http 本质是对XMLHttpRequest对象封装
+
+                $http({
+                    url: 'example.php',
+                    // method: 'get',
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    // params: { // get 参数
+                    //     name: 'itcast',
+                    //     sex: '男'
+                    // },
+                    // data: 'age=10'
+                    data: { // post 传参
+                        age: 10
+                    }
+                }).success(function (info) {
+                    // info 就是返回的数据
+                    console.log(info);
+                });
+
+            }]);
+
+
+
+            App.factory('showTime', ['$filter', function ($filter) {
+
+                // return function () {
+
+                // 	var now = new Date();
+
+                // 	var date = $filter('date');
+
+                // 	return date(now, 'y-M-d H:m:s');
+
+                // }
+
+                var now = new Date();
+
+                var date = $filter('date');
+
+                return {
+                    now: date(now, 'y-M-d H:m:s')
+                }
+
+            }]);
+
+            App.controller('TemoController', ['$scope', 'showTime', function ($scope, showTime) {
+
+                // $scope.now = showTime();
+
+                $scope.now = showTime.now;
+
+            }]);
+
+            App.value('author', 'hello');
+		App.value('version', '9.0');
+
+		// 本质上一个服务
+		// 从表现形式上是一个常量
+		// 常量就是不变的值与变对量相对应
+
+		// 声明依赖调用服务
+		App.controller('YemoController', ['$scope', 'author', 'version', function($scope, author, version) {
+
+			$scope.author = author;
+			$scope.ver = version;
+		}]);
+        </script>
+
+</body>
+
+</html>
